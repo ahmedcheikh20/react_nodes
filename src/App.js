@@ -3,15 +3,101 @@ import "./App.css";
 import GraphDisplay from "./components/GraphDisplay.js";
 import NodeControls from "./components/NodeControls.js";
 import EdgeControls from "./components/EdgeControls.js";
+import Modal from "./components/Modal";
 
 function App() {
   const initialNodes = [
-    { id: 1, label: "Node 1", title: "node 1 tootip text" },
-    { id: 2, label: "Node 2", title: "node 2 tootip text" },
-    { id: 3, label: "Node 3", title: "node 3 tootip text" },
-    { id: 4, label: "Node 4", title: "node 4 tootip text" },
-    { id: 5, label: "Node 5", title: "node 5 tootip text" },
+    {
+      id: 1,
+      label: "Node 1",
+      shape: "image",
+      image: "/icons/API-Gateway.svg",
+      size: 50,
+      title: "node 1 tootip text",
+    },
+    {
+      id: 2,
+      label: "Node 2",
+      shape: "image",
+      image: "/icons/API-Gateway.svg",
+      size: 50,
+      title: "node 2 tootip text",
+    },
+    {
+      id: 3,
+      label: "Node 3",
+      shape: "image",
+      image: "/icons/API-Gateway.svg",
+      size: 50,
+      title: "node 3 tootip text",
+    },
+    {
+      id: 4,
+      label: "Node 4",
+      shape: "image",
+      image: "/icons/API-Gateway.svg",
+      size: 50,
+      title: "node 4 tootip text",
+    },
+    {
+      id: 5,
+      label: "Node 5",
+      shape: "image",
+      image: "/icons/API-Gateway.svg",
+      size: 50,
+      title: "node 5 tootip text",
+    },
   ];
+
+  const nodeSchema = {
+    properties: [
+      {
+        key: "1",
+        label: "id",
+        type: "text",
+        shape: "image",
+        image: "../icons/API-Gateway.svg",
+        size: 50,
+        required: true,
+      },
+      {
+        key: "2",
+        label: "name",
+        type: "text",
+        shape: "image",
+        image: "../icons/API-Gateway.svg",
+        size: 50,
+        required: false,
+      },
+      {
+        key: "3",
+        label: "s3_key",
+        type: "number",
+        shape: "image",
+        image: "../../icons/API-Gateway.svg",
+        size: 50,
+        required: false,
+      },
+      {
+        key: "4",
+        label: "s3_nucket",
+        type: "text",
+        shape: "image",
+        image: "../icons/API-Gateway.svg",
+        size: 50,
+        required: true,
+      },
+      {
+        key: "5",
+        label: "Label",
+        type: "number",
+        shape: "image",
+        image: "../icons/API-Gateway.svg",
+        size: 50,
+        required: true,
+      },
+    ],
+  };
 
   const initialEdges = [
     { from: 1, to: 2 },
@@ -28,6 +114,25 @@ function App() {
   const [newNodeLabel, setNewNodeLabel] = useState("");
   const [fromNode, setFromNode] = useState("");
   const [toNode, setToNode] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddNodeClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFormSubmit = (formData) => {
+    // Use formData to add a new node
+    const newNode = {
+      id: Math.max(...nodes.map((n) => n.id)) + 1,
+      ...formData,
+    };
+    setNodes([...nodes, newNode]);
+    handleModalClose();
+  };
 
   const graph = {
     nodes: nodes,
@@ -71,7 +176,15 @@ function App() {
     },
     height: "500px",
     physics: {
-      enabled: true,
+      stabilization: true,
+      solver: "barnesHut",
+      barnesHut: {
+        gravitationalConstant: -8000,
+        centralGravity: 0.3,
+        springLength: 95,
+      },
+      adaptiveTimestep: true,
+      enabled: true, // Enables physics initially
     },
   };
 
@@ -117,6 +230,13 @@ function App() {
 
   return (
     <div>
+      <button onClick={handleAddNodeClick}>Add Node</button>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        schema={nodeSchema}
+        onSubmit={handleFormSubmit}
+      />
       <GraphDisplay graph={graph} options={options} events={events} />
       <NodeControls
         newLabel={newLabel}

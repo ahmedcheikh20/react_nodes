@@ -75,3 +75,9 @@
   outline: none;
   border-color: #5c6bc0;
 }
+
+#mynetwork {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
