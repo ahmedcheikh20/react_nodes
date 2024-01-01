@@ -36,3 +36,42 @@
     transform: rotate(360deg);
   }
 }
+
+/* App.css */
+.control-panel {
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px; /* Creates space between child elements */
+  flex-wrap: wrap;
+}
+
+.control-panel input,
+.control-panel button {
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.control-panel button {
+  background-color: #5c6bc0;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.control-panel button:hover {
+  background-color: #3949ab;
+}
+
+/* You can add some hover effects and transitions for better interactivity */
+.control-panel input:focus,
+.control-panel button:focus {
+  outline: none;
+  border-color: #5c6bc0;
+}

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import './App.css';
-import Graph from "react-graph-vis";
+import React, { useState } from "react";
+import "./App.css";
+import GraphDisplay from "./components/GraphDisplay.js";
+import NodeControls from "./components/NodeControls.js";
+import EdgeControls from "./components/EdgeControls.js";
 
 function App() {
   const initialNodes = [
@@ -8,73 +10,73 @@ function App() {
     { id: 2, label: "Node 2", title: "node 2 tootip text" },
     { id: 3, label: "Node 3", title: "node 3 tootip text" },
     { id: 4, label: "Node 4", title: "node 4 tootip text" },
-    { id: 5, label: "Node 5", title: "node 5 tootip text" }
+    { id: 5, label: "Node 5", title: "node 5 tootip text" },
   ];
 
   const initialEdges = [
     { from: 1, to: 2 },
     { from: 1, to: 3 },
     { from: 2, to: 4 },
-    { from: 2, to: 5 }
-  ]
+    { from: 2, to: 5 },
+  ];
 
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedEdge, setSelectedEdge] = useState(null);
-  const [newLabel, setNewLabel] = useState('');
-  const [newNodeLabel, setNewNodeLabel] = useState('');
-  const [fromNode, setFromNode] = useState('');
-  const [toNode, setToNode] = useState('');
+  const [newLabel, setNewLabel] = useState("");
+  const [newNodeLabel, setNewNodeLabel] = useState("");
+  const [fromNode, setFromNode] = useState("");
+  const [toNode, setToNode] = useState("");
 
   const graph = {
     nodes: nodes,
-    edges: edges
+    edges: edges,
   };
 
   const addEdge = () => {
     const newEdge = {
       from: parseInt(fromNode),
-      to: parseInt(toNode)
+      to: parseInt(toNode),
     };
 
     setEdges([...edges, newEdge]);
-    setFromNode('');
-    setToNode('');
+    setFromNode("");
+    setToNode("");
   };
 
   const deleteEdge = () => {
     if (selectedEdge !== null) {
-      const updatedEdges = edges.filter(edge => edge.id !== selectedEdge);
+      const updatedEdges = edges.filter((edge) => edge.id !== selectedEdge);
       setEdges(updatedEdges);
       setSelectedEdge(null);
     }
   };
 
-  const options = {
-    layout: {
-      hierarchical: true
-    },
-    edges: {
-      color: "#000000"
-    },
-    height: "500px"
-  };
   // const options = {
   //   layout: {
-  //     hierarchical: false // Disable hierarchical layout
+  //     hierarchical: true,
   //   },
   //   edges: {
-  //     color: "#000000"
+  //     color: "#000000",
   //   },
   //   height: "500px",
-  //   physics: {
-  //     enabled: true // You can adjust physics as needed
-  //   }
   // };
+  const options = {
+    layout: {
+      hierarchical: false, // Disable hierarchical layout
+    },
+    edges: {
+      color: "#000000",
+    },
+    height: "500px",
+    physics: {
+      enabled: true,
+    },
+  };
 
   const events = {
-    select: function(event) {
+    select: function (event) {
       var { nodes: selectedNodes, edges: selectedEdges } = event;
       if (selectedNodes.length > 0) {
         setSelectedNode(selectedNodes[0]);
@@ -86,78 +88,52 @@ function App() {
         setSelectedNode(null);
         setSelectedEdge(null);
       }
-    }
+    },
   };
 
   const updateNodeLabel = () => {
     if (selectedNode !== null) {
-  
-      const updatedNodes = nodes.map(node => {
+      const updatedNodes = nodes.map((node) => {
         if (node.id === selectedNode) {
           return { ...node, label: newLabel };
         }
         return node;
       });
-  
+
       setNodes(updatedNodes);
-      setNewLabel("")
+      setNewLabel("");
     }
   };
   const addNode = () => {
     const newNode = {
-      id: Math.max(...nodes.map(node => node.id)) + 1, // Generate a new ID
+      id: Math.max(...nodes.map((node) => node.id)) + 1, // Generate a new ID
       label: newNodeLabel,
-      title: `node ${newNodeLabel} tooltip text`
+      title: `node ${newNodeLabel} tooltip text`,
     };
 
     setNodes([...nodes, newNode]);
-    setNewNodeLabel(''); // Reset the input field
+    setNewNodeLabel(""); // Reset the input field
   };
 
   return (
     <div>
-      <Graph
-        key={Date.now()}
-        graph={graph}
-        options={options}
-        events={events}
+      <GraphDisplay graph={graph} options={options} events={events} />
+      <NodeControls
+        newLabel={newLabel}
+        setNewLabel={setNewLabel}
+        updateNodeLabel={updateNodeLabel}
+        newNodeLabel={newNodeLabel}
+        setNewNodeLabel={setNewNodeLabel}
+        addNode={addNode}
       />
-      <div>
-        <input
-          type="text"
-          value={newLabel}
-          onChange={e => setNewLabel(e.target.value)}
-          placeholder="New label"
-        />
-        <button onClick={updateNodeLabel}>Update Node Label</button>
-      </div>
-      <div>
-        <input
-          type="text"
-          value={newNodeLabel}
-          onChange={e => setNewNodeLabel(e.target.value)}
-          placeholder="New node label"
-        />
-        <button onClick={addNode}>Add Node</button>
-      </div>
-      <div>
-        <input
-          type="number"
-          value={fromNode}
-          onChange={e => setFromNode(e.target.value)}
-          placeholder="From node ID"
-        />
-        <input
-          type="number"
-          value={toNode}
-          onChange={e => setToNode(e.target.value)}
-          placeholder="To node ID"
-        />
-        <button onClick={addEdge}>Add Edge</button>
-      </div>
-      <div>
-        <button onClick={deleteEdge}>Delete Selected Edge</button>
-      </div>
+      <EdgeControls
+        fromNode={fromNode}
+        setFromNode={setFromNode}
+        toNode={toNode}
+        setToNode={setToNode}
+        addEdge={addEdge}
+        deleteEdge={deleteEdge}
+      />
     </div>
   );
 }
